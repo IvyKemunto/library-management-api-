@@ -8,7 +8,11 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+# Allow PythonAnywhere domains by default
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    '.pythonanywhere.com'
+).split(',')
 
 # Database configuration for Heroku/Production
 database_url = os.environ.get('DATABASE_URL')
@@ -21,14 +25,14 @@ if database_url:
         )
     }
 
-# Security settings
-SECURE_SSL_REDIRECT = True
+# Security settings (conditional for PythonAnywhere compatibility)
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False') == 'True'
+SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD', 'False') == 'True'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Static files with WhiteNoise
